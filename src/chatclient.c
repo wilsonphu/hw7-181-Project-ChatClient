@@ -28,12 +28,23 @@ int handle_stdin() {
 		        fprintf(stderr, "Sorry, limit your message to 1 line of at most %d characters.\n", MAX_MSG_LEN);
 			int c;
 			while ((c=getchar()) != '\n' && c != EOF);
+			printf("[%s]: ", username);
+			fflush(stdout);
+
 			return 0;
 	}
+
 	if (len>0 && outbuf[len-1] == '\n'){
 		outbuf[len-1]='\0';
 		len--;
 	}
+
+	//handle blank input
+	if (len == 0) {
+        printf("[%s]: ", username);
+        fflush(stdout);
+        return 0;
+        }
 
 	//send to server if not blank 
 	if (len>0){
