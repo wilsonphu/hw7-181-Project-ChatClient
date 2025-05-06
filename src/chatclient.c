@@ -84,7 +84,8 @@ int main(int argc, char **argv) {
 	}
 	break;
     }
-
+    
+    printf("Hello, %s. Let's try to connect to the server.\n",username);
     //Create TCP
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
     if(client_socket<0){
@@ -129,10 +130,6 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
     }
 
-
-    //greeting 
-	printf("Hello, %s. Let's try to connect to the server.\n",username);
     
-
     return EXIT_SUCCESS;
 }
