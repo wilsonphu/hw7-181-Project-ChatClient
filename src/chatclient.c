@@ -85,6 +85,53 @@ int main(int argc, char **argv) {
 	break;
     }
 
+    //Create TCP
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(client_socket<0){
+	    fprintf(stderr, "Error:Failed to create socket. %s\n", strerror(errno));
+	    return EXIT_FAILURE;
+    }
+
+    // Prepare server address
+    struct sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr = addr; 
+    server_addr.sin_port = htons(port);
+
+    //Connect to server
+    connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+
+    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr))<0){
+	    fprintf(stderr, "Error: Failed to connect to server. %s\n", strerror(errno));
+	    close(client_socket);
+	    return EXIT_FAILURE;
+    }
+
+    //Receive message from the server
+    int bytes_received = recv_with_length(client_socket, inbuf, sizeof(inbuf));
+    if (bytes_received < 0){
+            fprintf(stderr, "Error: Failed to connect to server. %s\n", strerror(errno));
+	    close(client_socket);
+	    return EXIT_FAILURE;
+    }
+
+    if (bytes_received ==0){
+	    fprintf(stderr, "Error:Server closed the connection.\n");
+	    close(client_socket);
+            return EXIT_FAILURE;
+    }
+
+    printf("\n%s\n\n", inbuf);
+
+    //send username to server
+    if (send_with_length(client_socket, username, strlen(username)+1)<0){
+	    fprintf(stderr, "Error: Failed to send username. %s\n", strerror(errno));
+	    close(client_socket);
+            return EXIT_FAILURE;
+    }
+
+
     //greeting 
 	printf("Hello, %s. Let's try to connect to the server.\n",username);
     

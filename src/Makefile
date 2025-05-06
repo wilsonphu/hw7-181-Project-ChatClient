@@ -1,5 +1,5 @@
 CC      = gcc
-TARGET  = chatclient
+TARGET  = chatclient ch
 C_FILES = $(wildcard *.c)
 OBJS    = $(patsubst %.c,%.o,$(C_FILES))
 CFLAGS  = -g -Wall -Werror -pedantic-errors
