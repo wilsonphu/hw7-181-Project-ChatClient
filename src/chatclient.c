@@ -49,9 +49,38 @@ int main(int argc, char **argv) {
 	fprintf(stderr, "Error: The port must in range [1024, 65535].\n");
 	return EXIT_FAILURE;
     } 
+    
+    //Prompt for username
+    while(1){
+	printf("Enter your user name: ");
+	fflush(stdout);
+	
+	if (!fgets(username, sizeof(username), stdin)){
+		fprintf(stderr, "Error: Failed to read username.\n");
+		return EXIT_FAILURE;
+	}
 
-   
+	size_t len = strlen(username);
+	if (len>0 && username[len-1] == '\n'){
+		username[len-1] = '\0';
+		len--;
+	}
+
+	//check if username is empty
+	if (len == 0){
+		continue;
+	}
+
+	if (len>MAX_NAME_LEN){
+		printf("Sorrt, limit your name to %d characters.\n", MAX_NAME_LEN);
+		continue;
+	}
+	break;
+    }
+
+    //greeting 
+	printf("Hello, %s. Let's try to connect to the server.\n",username);
     
-    
+
     return EXIT_SUCCESS;
 }
