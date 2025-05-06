@@ -15,9 +15,10 @@ char outbuf[MAX_MSG_LEN + 1];
 
 int handle_stdin() {
     /* TODO */
+	/**
 	printf("[%s]: ", username);
 	fflush(stdout);
-
+**/
 	if(!fgets(outbuf, sizeof(outbuf),stdin)){
 	       return -1;
 	}
@@ -48,7 +49,8 @@ int handle_stdin() {
 	} 		
    
        
-
+	printf("[%s]: ", username);
+        fflush(stdout);
 	}
 	return 0;
 }
