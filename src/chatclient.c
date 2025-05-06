@@ -186,6 +186,9 @@ int main(int argc, char **argv) {
 
     fd_set fds;
     int max_fd = (client_socket > STDIN_FILENO)? client_socket:STDIN_FILENO;
+    printf("[%s]: ", username);
+    fflush(stdout);
+
     while (1){
 	    FD_ZERO(&fds);
 	    FD_SET(STDIN_FILENO, &fds);
