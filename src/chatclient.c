@@ -61,9 +61,16 @@ int main(int argc, char **argv) {
 	}
 
 	size_t len = strlen(username);
+
+	if (len > 0 && username[len - 1] != '\n') {
+        	int c;
+        	while ((c = getchar()) != '\n' && c != EOF);  
+        	printf("Sorry, limit your name to %d characters.\n", MAX_NAME_LEN);
+        	continue;
+    	}
 	if (len>0 && username[len-1] == '\n'){
 		username[len-1] = '\0';
-		len--;
+		len--;	
 	}
 
 	//check if username is empty
