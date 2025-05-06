@@ -15,12 +15,66 @@ char outbuf[MAX_MSG_LEN + 1];
 
 int handle_stdin() {
     /* TODO */
-    return 0;
+	printf("[%s]: ", username);
+	fflush(stdout);
 
+	if(!fgets(outbuf, sizeof(outbuf),stdin)){
+	       return -1;
+	}
+
+	size_t len = strlen(outbuf);
+	if (len>0 && outbuf[len - 1] != '\n') {
+		        fprintf(stderr, "Sorry, limit your message to 1 line of at most %d characters.\n", MAX_MSG_LEN);
+			int c;
+			while ((c=getchar()) != '\n' && c != EOF);
+			return 0;
+	}
+	if (len>0 && outbuf[len-1] == '\n'){
+		outbuf[len-1]='\0';
+		len--;
+	}
+
+	//send to server if not blank 
+	if (len>0){
+		if (send_with_length(client_socket, outbuf, len+1)<0){
+			fprintf(stderr, "Error: Failed to send message.%s\n", strerror(errno));
+		       	return -1;
+		}
+
+	//check for "bye"
+	if (strcmp(outbuf, "bye") == 0){
+		printf("Goodbye.\n");
+		return -1;
+	} 		
+   
+       
+
+	}
+	return 0;
 }
 
 int handle_client_socket() {
     /* TODO */
+	int bytes_received = recv_with_length(client_socket, inbuf, sizeof(inbuf));
+	if (bytes_received<0){
+		fprintf(stderr, "Warning: Failed to receive incoming message.\n");
+		return 0;
+	}
+
+	if (bytes_received == 0){
+		printf("\nConnection to server has been lost.\n");
+		return -1;
+	}
+
+	if (strcmp(outbuf, "bye") == 0){
+		printf("\nInitiated shutdown.\n");
+		return -1;
+	}
+
+	printf("%s\n",inbuf);
+
+
+
     return 0;
 }
 
@@ -130,6 +184,31 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
     }
 
-    
-    return EXIT_SUCCESS;
+    fd_set fds;
+    int max_fd = (client_socket > STDIN_FILENO)? client_socket:STDIN_FILENO;
+    while (1){
+	    FD_ZERO(&fds);
+	    FD_SET(STDIN_FILENO, &fds);
+	    FD_SET(client_socket, &fds);
+
+	    if(select(max_fd+1, &fds, NULL, NULL, NULL)<0){
+		fprintf(stderr, "Error: select() failed. %s\n",strerror(errno));
+		break;
+	}
+       	
+	if (FD_ISSET(STDIN_FILENO, &fds)){
+		if(handle_stdin()<0){
+		break; 
+		}
+	}
+
+	if (FD_ISSET(client_socket, &fds)){
+                if(handle_client_socket()<0){
+                break;
+                }
+        }
+	}
+
+	close(client_socket);    
+    	return EXIT_SUCCESS;
 }
