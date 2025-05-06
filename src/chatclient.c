@@ -100,8 +100,6 @@ int main(int argc, char **argv) {
     server_addr.sin_port = htons(port);
 
     //Connect to server
-    connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
-
     if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr))<0){
 	    fprintf(stderr, "Error: Failed to connect to server. %s\n", strerror(errno));
 	    close(client_socket);
