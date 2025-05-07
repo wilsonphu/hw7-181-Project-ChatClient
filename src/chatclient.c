@@ -26,8 +26,8 @@ int handle_stdin() {
 	size_t len = strlen(outbuf);
 	if (len>0 && outbuf[len - 1] != '\n') {
 		        fprintf(stderr, "Sorry, limit your message to 1 line of at most %d characters.\n", MAX_MSG_LEN);
-			int c;
-			while ((c=getchar()) != '\n' && c != EOF);
+		        int ch;	
+			while ((ch = getchar()) != '\n' && ch != EOF);
 			printf("[%s]: ", username);
 			fflush(stdout);
 
@@ -79,13 +79,15 @@ int handle_client_socket() {
 		return -1;
 	}
 
-	if (strcmp(outbuf, "bye") == 0){
+	if (strcmp(inbuf, "bye") == 0){
 		printf("\nInitiated shutdown.\n");
 		return -1;
 	}
 
+	printf("\r\033[K");
 	printf("%s\n",inbuf);
-
+	printf("[%s]: ", username);
+	fflush(stdout);
 
 
     return 0;
@@ -223,8 +225,8 @@ int main(int argc, char **argv) {
                 break;
                 }
         }
-	}
-
-	close(client_socket);    
-    	return EXIT_SUCCESS;
+    } 
+    
+    close(client_socket);    
+    return EXIT_SUCCESS;
 }
